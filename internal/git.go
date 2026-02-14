@@ -70,8 +70,8 @@ func detectDefaultBranch(repo *git.Repository) (string, error) {
 	// First, try to get the default branch from remote HEAD
 	remote, err := repo.Remote("origin")
 	if err == nil {
-		refs, err := remote.List(&git.ListOptions{})
-		if err == nil {
+		refs, listErr := remote.List(&git.ListOptions{})
+		if listErr == nil {
 			for _, ref := range refs {
 				if ref.Name().String() == "HEAD" {
 					// This is a symbolic ref pointing to the default branch
@@ -87,7 +87,7 @@ func detectDefaultBranch(repo *git.Repository) (string, error) {
 	// Try common default branch names
 	branches := []string{"main", "master", "develop"}
 	for _, name := range branches {
-		if _, err := repo.Reference(plumbing.NewBranchReferenceName(name), true); err == nil {
+		if _, refErr := repo.Reference(plumbing.NewBranchReferenceName(name), true); refErr == nil {
 			return name, nil
 		}
 	}
@@ -128,14 +128,14 @@ func (g *GitRepo) ListBranches(staleDays int, protectedPatterns []string) ([]Bra
 			return nil
 		}
 
-		commit, err := g.repo.CommitObject(ref.Hash())
-		if err != nil {
-			return err
+		commit, commitErr := g.repo.CommitObject(ref.Hash())
+		if commitErr != nil {
+			return commitErr
 		}
 
-		isMerged, err := g.isMerged(name)
-		if err != nil {
-			return err
+		isMerged, mergeErr := g.isMerged(name)
+		if mergeErr != nil {
+			return mergeErr
 		}
 
 		branch := Branch{

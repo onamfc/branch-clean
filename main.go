@@ -101,9 +101,8 @@ func runList(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
 
-	// Validate git repository
-	if err := validateGitRepo(repoPath); err != nil {
-		return err
+	if validateErr := validateGitRepo(repoPath); validateErr != nil {
+		return validateErr
 	}
 
 	git, err := internal.NewGitRepo(repoPath)
@@ -126,8 +125,8 @@ func runList(cmd *cobra.Command, args []string) error {
 	if outputFormat == "json" {
 		encoder := json.NewEncoder(os.Stdout)
 		encoder.SetIndent("", "  ")
-		if err := encoder.Encode(filtered); err != nil {
-			return fmt.Errorf("failed to encode JSON: %w", err)
+		if encodeErr := encoder.Encode(filtered); encodeErr != nil {
+			return fmt.Errorf("failed to encode JSON: %w", encodeErr)
 		}
 	} else {
 		internal.PrintBranches(filtered, false, false)
@@ -147,9 +146,8 @@ func runCleanup(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
 
-	// Validate git repository
-	if err := validateGitRepo(repoPath); err != nil {
-		return err
+	if validateErr := validateGitRepo(repoPath); validateErr != nil {
+		return validateErr
 	}
 
 	git, err := internal.NewGitRepo(repoPath)
@@ -180,7 +178,7 @@ func runCleanup(cmd *cobra.Command, args []string) error {
 
 	// Skip confirmation if force or assumeYes flag is set
 	if !force && !assumeYes && !internal.ConfirmDeletion(selected, dryRun) {
-		fmt.Println("Cancelled")
+		fmt.Println("Canceled")
 		return nil
 	}
 

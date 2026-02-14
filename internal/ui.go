@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	// ErrCancelled is returned when the user cancels an operation
-	ErrCancelled = errors.New("cancelled by user")
+	// ErrCanceled is returned when the user cancels an operation
+	ErrCanceled = errors.New("canceled by user")
 )
 
 const (
@@ -150,7 +150,7 @@ func SelectBranches(branches []Branch) ([]Branch, error) {
 		if err != nil {
 			// Handle interrupts (Ctrl+C)
 			if err == promptui.ErrInterrupt || strings.Contains(err.Error(), "^C") {
-				return nil, ErrCancelled
+				return nil, ErrCanceled
 			}
 			return nil, fmt.Errorf("selection failed: %w", err)
 		}
