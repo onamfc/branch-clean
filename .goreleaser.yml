@@ -89,17 +89,3 @@ release:
 
     ---
     **Full Changelog**: https://github.com/onamfc/branch-clean/compare/{{.PreviousTag}}...{{.Tag}}
-
-brews:
-  - repository:
-      owner: onamfc
-      name: homebrew-tap
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    directory: Formula
-    homepage: https://github.com/onamfc/branch-clean
-    description: "Safely delete merged and stale git branches with interactive selection"
-    license: MIT
-    test: |
-      system "#{bin}/branch-clean version"
-    install: |
-      bin.install "branch-clean"
