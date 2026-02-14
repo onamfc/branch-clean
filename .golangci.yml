@@ -22,7 +22,7 @@ formatters:
   enable:
     - gofmt
 
-linters-settings:
+settings:
   errcheck:
     check-type-assertions: true
   govet:
