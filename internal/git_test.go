@@ -62,10 +62,10 @@ func TestListBranches(t *testing.T) {
 	tmpDir, repo := setupTestRepo(t)
 
 	head, _ := repo.Head()
-	repo.CreateBranch(&git.Branch{
-		Name:   "feature-branch",
-		Merge:  head.Name(),
-	})
+	repo.Storer.SetReference(plumbing.NewHashReference(
+		plumbing.NewBranchReferenceName("feature-branch"),
+		head.Hash(),
+	))
 
 	gitRepo, _ := NewGitRepo(tmpDir)
 	branches, err := gitRepo.ListBranches(30, []string{"main", "master"})

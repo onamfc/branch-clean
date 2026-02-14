@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
-	"github.com/spf13/cobra"
 	"github.com/onamfc/branch-clean/internal"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -233,9 +232,9 @@ func runCleanup(cmd *cobra.Command, args []string) error {
 }
 
 const (
-	exitSuccess          = 0
-	exitError            = 1
-	exitProtectedBranch  = 2
+	exitSuccess         = 0
+	exitError           = 1
+	exitProtectedBranch = 2
 )
 
 func main() {
@@ -246,8 +245,8 @@ func main() {
 			os.Exit(exitProtectedBranch)
 		}
 		if errors.Is(err, internal.ErrProtectedBranch) ||
-		   errors.Is(err, internal.ErrCurrentBranch) ||
-		   errors.Is(err, internal.ErrDefaultBranch) {
+			errors.Is(err, internal.ErrCurrentBranch) ||
+			errors.Is(err, internal.ErrDefaultBranch) {
 			os.Exit(exitProtectedBranch)
 		}
 		os.Exit(exitError)
