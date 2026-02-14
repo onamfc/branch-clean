@@ -95,7 +95,7 @@ brews:
       owner: onamfc
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    folder: Formula
+    directory: Formula
     homepage: https://github.com/onamfc/branch-clean
     description: "Safely delete merged and stale git branches with interactive selection"
     license: MIT
