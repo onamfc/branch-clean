@@ -30,12 +30,16 @@ func TestLoadConfig_NoFile(t *testing.T) {
 	}
 }
 
+func setTestHome(t *testing.T, dir string) {
+	t.Helper()
+	t.Setenv("HOME", dir)
+	t.Setenv("USERPROFILE", dir)
+}
+
 func TestSaveAndLoadConfig(t *testing.T) {
 	// Save a config to a temporary location
-	origHome := os.Getenv("HOME")
 	tmpHome := t.TempDir()
-	os.Setenv("HOME", tmpHome)
-	defer os.Setenv("HOME", origHome)
+	setTestHome(t, tmpHome)
 
 	testConfig := &Config{
 		StaleDays: 60,
@@ -63,10 +67,8 @@ func TestSaveAndLoadConfig(t *testing.T) {
 
 func TestLoadConfig_InvalidYAML(t *testing.T) {
 	// Create invalid YAML file
-	origHome := os.Getenv("HOME")
 	tmpHome := t.TempDir()
-	os.Setenv("HOME", tmpHome)
-	defer os.Setenv("HOME", origHome)
+	setTestHome(t, tmpHome)
 
 	configPath := filepath.Join(tmpHome, ".branch-clean.yaml")
 	if err := os.WriteFile(configPath, []byte("invalid: yaml: content:"), 0644); err != nil {
@@ -81,10 +83,8 @@ func TestLoadConfig_InvalidYAML(t *testing.T) {
 
 func TestLoadConfig_MissingValues(t *testing.T) {
 	// Create config with missing values
-	origHome := os.Getenv("HOME")
 	tmpHome := t.TempDir()
-	os.Setenv("HOME", tmpHome)
-	defer os.Setenv("HOME", origHome)
+	setTestHome(t, tmpHome)
 
 	configPath := filepath.Join(tmpHome, ".branch-clean.yaml")
 	// Empty config file
