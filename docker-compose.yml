@@ -1,0 +1,27 @@
+services:
+  test:
+    image: golang:1.22
+    working_dir: /app
+    volumes:
+      - .:/app
+      - go-mod-cache:/go/pkg/mod
+    command: sh -c "go mod tidy && go test -v -race ./..."
+
+  build:
+    image: golang:1.22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+      - go-mod-cache:/go/pkg/mod
+    command: sh -c "go mod tidy && go build -ldflags '-X main.version=dev' -o /dev/null"
+
+  lint:
+    image: golangci/golangci-lint:latest
+    working_dir: /app
+    volumes:
+      - .:/app
+      - go-mod-cache:/go/pkg/mod
+    command: golangci-lint run ./...
+
+volumes:
+  go-mod-cache:

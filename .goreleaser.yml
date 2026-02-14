@@ -1,0 +1,105 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: branch-clean
+    binary: branch-clean
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+    mod_timestamp: '{{ .CommitTimestamp }}'
+
+archives:
+  - id: branch-clean
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+      - README.md
+      - CHANGELOG.md
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - Merge pull request
+      - Merge branch
+  groups:
+    - title: 'New Features'
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug Fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: 'Performance Improvements'
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: 'Other Changes'
+      order: 999
+
+release:
+  github:
+    owner: onamfc
+    name: branch-clean
+  draft: false
+  prerelease: auto
+  name_template: "{{.ProjectName}} v{{.Version}}"
+  footer: |
+    ## Installation
+
+    ### Using Go
+    ```bash
+    go install github.com/onamfc/branch-clean@{{.Tag}}
+    ```
+
+    ### Download Binary
+    Download the appropriate binary for your platform from the assets below.
+
+    ---
+    **Full Changelog**: https://github.com/onamfc/branch-clean/compare/{{.PreviousTag}}...{{.Tag}}
+
+brews:
+  - repository:
+      owner: onamfc
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    folder: Formula
+    homepage: https://github.com/onamfc/branch-clean
+    description: "Safely delete merged and stale git branches with interactive selection"
+    license: MIT
+    test: |
+      system "#{bin}/branch-clean version"
+    install: |
+      bin.install "branch-clean"
